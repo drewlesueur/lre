@@ -7,7 +7,15 @@ api_key = config.key
 secret = config.secret
 auth_token = ""
 
+setInterval () ->
+  #clear out auth token
+  auth_token = ""
+, 8800000
+
 spark_login = (cb) ->
+  if auth_token
+    return _.defer cb
+
   raw_api_sig = "#{secret}ApiKey#{api_key}"
 
   api_sig = crypto.createHash('md5').update(raw_api_sig).digest("hex");
@@ -20,23 +28,17 @@ spark_login = (cb) ->
     url: auth_url
 
   request request_opts, (error, response, body) ->
-    console.log "authenticated"
     auth_token = JSON.parse(body).D.Results[0].AuthToken
-    console.log auth_token
+    console.log body
 
     cb error, response
 
 reorder = (x) ->
-  console.log "reorder***"
   
   l = _.pairs x
-  console.log JSON.stringify l
-  
   l = _.sortBy l, (i) -> i[0]
-  console.log JSON.stringify l
   
   x = _.object l
-  console.log JSON.stringify x
   x
   
 spark = (url, opts, cb) ->
@@ -55,10 +57,6 @@ spark = (url, opts, cb) ->
     auth_url = "http://sparkapi.com#{url}?#{qs.stringify(opts)}"
     
     
-    console.log(auth_url)
-    console.log("raw......")
-    console.log(raw_api_sig)
-    console.log(JSON.stringify(opts))
     
     request_opts =
       method: "GET"
@@ -67,12 +65,8 @@ spark = (url, opts, cb) ->
       url: auth_url
       #qs: opts
   
-    console.log "makeing request"
     request request_opts, (err, response, body) ->
-      console.log "request  done"
-      #console.log response
-      #console.log body
+      console.log body
       cb err, JSON.parse body
-
   
 module.exports = spark

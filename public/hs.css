@@ -1,0 +1,11 @@
+body {margin: 10px}
+img {width:150px; float: left; margin-right: 10px;}
+.address {font-weight: bold; text-transform: capitalize;}
+.description, .on-market-date, .photos {visibility: hidden; height: 0px;}
+.listing {clear:both; width: 300px; margin-bottom: 10px; border-bottom: 1px solid #cccccc; height: 125px;}
+.price {color: #0d58a6; font-weight: bold;}
+h1 {font-family: 'Montserrat Alternates', sans-serif;}
+.baths, .beds {float: left; margin-right: 5px;}
+//.button {font-family: 'Montserrat Alternates', sans-serif; border:0px solid black; padding: 6px; float: right; width: 128px; text-align: center; background-color: #FF9900; font-weight: bold; color: white;}
+.button {color: #ff9900; text-decoration: underline; font-family: 'Montserrat Alternates', sans-serif; }
+.search {float: left; width: 300px;}
