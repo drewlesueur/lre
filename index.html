@@ -1,10 +1,40 @@
 <!doctype html>
 <html>
 <head>
+<meta name="viewport" content="initial-scale=1">
+<link href='http://fonts.googleapis.com/css?family=Montserrat+Alternates:400,700' rel='stylesheet' type='text/css'>
+<link href='http://mobilemin.com/homeseekr/hs.css' rel='stylesheet' type='text/css'>
 </head>
 <body>
+<div class="search">
+<h1><span style="color: #ff9900;">home</span><span style="color: #0d58a6">seekr</span></h1>
+  <form method="GET" action="/">
+    <input placeholder="Zip Code" type="text" name="zip">
+    <input placeholder="Max Price" type="text" name="max_price">
+    <input type="submit" value="search">
+  </form>
+</div>
+<h2>Homes <span id="under-price"></span> for sale <span id="in-zip"></span></h2>
+<h3 cass="page">Page 1
+<img src="http://cdn.photos.sparkplatform.com/az/20110509192006820059000000.jpg" />
+<div class="listings">
+  <img src="loader.gif" />
+</div>
+<div style="clear: both"></div>
+<div> <a class="next" href="#">Next page</a> </div>
+  <script>
+    window.onerror = function (e) {
+      //$(document.body).html(e + "<br>" + e.lineNumber)
+      alert(e)
+      return false
+    }
+  
+  </script>
 
-<script>
-</script>
+<script src="jquery.js"></script>
+<script src="underscore.js"></script>
+<script src="backbone.js"></script>
+<script src="accounting.min.js"></script>
+<script src="index.js"></script>
 </body>
 </html>
