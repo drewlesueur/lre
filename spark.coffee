@@ -10,7 +10,8 @@ auth_token = ""
 setInterval () ->
   #clear out auth token
   auth_token = ""
-, 8800000
+, (30 * 60 * 1000 )
+#8800000
 
 spark_login = (cb) ->
   if auth_token

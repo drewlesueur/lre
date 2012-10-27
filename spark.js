@@ -17,8 +17,13 @@
 
   auth_token = "";
 
+  setInterval(function() {
+    return auth_token = "";
+  }, 30 * 60 * 1000);
+
   spark_login = function(cb) {
     var api_sig, auth_url, raw_api_sig, request_opts;
+    if (auth_token) return _.defer(cb);
     raw_api_sig = "" + secret + "ApiKey" + api_key;
     api_sig = crypto.createHash('md5').update(raw_api_sig).digest("hex");
     auth_url = "https://sparkapi.com/v1/session?ApiKey=" + api_key + "&ApiSig=" + api_sig;
@@ -30,24 +35,19 @@
       url: auth_url
     };
     return request(request_opts, function(error, response, body) {
-      console.log("authenticated");
       auth_token = JSON.parse(body).D.Results[0].AuthToken;
-      console.log(auth_token);
+      console.log(body);
       return cb(error, response);
     });
   };
 
   reorder = function(x) {
     var l;
-    console.log("reorder***");
     l = _.pairs(x);
-    console.log(JSON.stringify(l));
     l = _.sortBy(l, function(i) {
       return i[0];
     });
-    console.log(JSON.stringify(l));
     x = _.object(l);
-    console.log(JSON.stringify(x));
     return x;
   };
 
@@ -64,10 +64,6 @@
       api_sig = crypto.createHash('md5').update(raw_api_sig).digest("hex");
       opts.ApiSig = api_sig;
       auth_url = "http://sparkapi.com" + url + "?" + (qs.stringify(opts));
-      console.log(auth_url);
-      console.log("raw......");
-      console.log(raw_api_sig);
-      console.log(JSON.stringify(opts));
       request_opts = {
         method: "GET",
         headers: {
@@ -75,9 +71,8 @@
         },
         url: auth_url
       };
-      console.log("makeing request");
       return request(request_opts, function(err, response, body) {
-        console.log("request  done");
+        console.log(body);
         return cb(err, JSON.parse(body));
       });
     });
