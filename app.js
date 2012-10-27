@@ -65,6 +65,14 @@
 
   req = null;
 
+  app.get("/cl", function(_req, res) {
+    var max_price, page, zip;
+    req = _req;
+    zip = req.query.zip || "85207";
+    page = req.query.page || 2;
+    return max_price = req.query.max_price || 200000;
+  });
+
   app.get("/", function(_req, res) {
     var max_price, page, zip;
     req = _req;

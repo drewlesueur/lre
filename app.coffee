@@ -46,6 +46,15 @@ get_all_photos = (listings, cb) ->
   
 req = null
 
+# post to craigslist
+app.get "/cl", (_req, res) ->
+  req = _req
+  zip = req.query.zip || "85207"
+  page = req.query.page || 2
+  max_price = req.query.max_price || 200000
+    
+
+
 app.get "/", (_req, res) ->
   req = _req
   zip = req.query.zip || "85207"
