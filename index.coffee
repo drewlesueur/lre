@@ -63,6 +63,7 @@ render = (listings, zip, max_price, page) ->
   else
     html = listings_to_html listings, zip, max_price, page
     $(".next").show().attr "href", "##{zip}/#{max_price}/#{page - 0 + 1}"
+  $(".screenshot").attr "href", "http://homeseekr.com:8502/image?zip=#{zip}&max_price=#{max_price}&page=#{page}"
   $(".listings").html html
   $("#under-price").text "under " + accounting.formatMoney max_price, "$", 0
   $('[name="max_price"]').val accounting.formatMoney max_price, "$", 0

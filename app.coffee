@@ -52,8 +52,16 @@ app.get "/cl", (_req, res) ->
   zip = req.query.zip || "85207"
   page = req.query.page || 2
   max_price = req.query.max_price || 200000
-    
 
+app.get "/image", (_req, res) ->
+  req = _req
+  zip = req.query.zip || "85207"
+  page = req.query.page || 2
+  max_price = req.query.max_price || 200000
+  url = "http://homeseekr.com/##{zip}/#{max_price}/#{page}"
+  console.log url
+  exec("ph screenshot.coffee #{url}") (err, ret) ->
+    res.sendfile './screenshot.jpg'
 
 app.get "/", (_req, res) ->
   req = _req

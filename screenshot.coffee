@@ -20,6 +20,7 @@ waitFor = (testFx, onReady, timeOutMillis=3000) ->
 page = require('webpage').create();
 system = require 'system'
 url = system.args[1]
+console.log "phantom url is #{url}"
 page.viewportSize =  width: 1024, height: 1000
 page.open url, (status) ->
   waitFor ->

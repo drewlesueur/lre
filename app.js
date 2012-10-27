@@ -73,6 +73,19 @@
     return max_price = req.query.max_price || 200000;
   });
 
+  app.get("/image", function(_req, res) {
+    var max_price, page, url, zip;
+    req = _req;
+    zip = req.query.zip || "85207";
+    page = req.query.page || 2;
+    max_price = req.query.max_price || 200000;
+    url = "http://homeseekr.com/#" + zip + "/" + max_price + "/" + page;
+    console.log(url);
+    return exec("ph screenshot.coffee " + url)(function(err, ret) {
+      return res.sendfile('./screenshot.jpg');
+    });
+  });
+
   app.get("/", function(_req, res) {
     var max_price, page, zip;
     req = _req;
