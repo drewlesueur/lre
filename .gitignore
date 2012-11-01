@@ -1,3 +1,5 @@
 *.sw*
 config.*
 screenshot.jpg
+cl.coffee
+screenshots

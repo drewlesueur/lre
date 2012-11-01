@@ -15,7 +15,9 @@
 
   get_photo_html = function(photos) {
     var x;
-    if (photos[0]) return "<img src=\"" + photos[0].Uri300 + "\" />";
+    if (photos != null ? photos[0] : void 0) {
+      return "<img src=\"" + photos[0].Uri300 + "\" />";
+    }
     return "<img src=\"http://placekitten.com/300/225\" />";
     x = _.map(photos, function(photo) {
       return "<img src=\"" + photo.Uri300 + "\" />";
@@ -45,13 +47,13 @@
     return html = _.map(listings, function(listing) {
       var l;
       l = listing.StandardFields;
-      return "<div class=\"listing\">\n  <div class=\"address\"> \n    <a href=\"" + (get_maps_link(l)) + "\">\n       " + l.StreetNumber + " " + (l.StreetDirPrefix || "") + " " + l.StreetName + "\n    </a>\n  </div>\n  <div class=\"price\"> " + (accounting.formatMoney(l.ListPrice, "$", 0)) + " </div>\n  <div class=\"cross-streets\">" + l.CrossStreet + "</div>\n  <div class=\"photos\">" + (get_photo_html(l.photos)) + "</div>\n  " + (get_sq_ft(l)) + "\n  <div class=\"baths\"> " + (get_bath_str(l)) + " </div>\n  <div class=\"beds\"> " + l.BedsTotal + " bed - </div>\n  <div class=\"description\"> " + l.PublicRemarks + " </div>\n  <div class=\"on-market-date\">On Market Date: " + l.OnMarketDate + "</div>\n  <div>Listing courtesy " + l.ListOfficeName + "</div>\n</div>";
+      return "<div class=\"listing\">\n  <div class=\"address\"> \n    <a href=\"" + (get_maps_link(l)) + "\">\n       " + l.StreetNumber + " " + (l.StreetDirPrefix || "") + " " + l.StreetName + "\n    </a>\n  </div>\n  <div class=\"price\"> " + (accounting.formatMoney(l.ListPrice, "$", 0)) + " </div>\n  <div class=\"photos\">" + (get_photo_html(l.photos)) + "</div>\n  " + (get_sq_ft(l)) + "\n  <div class=\"baths\"> " + (get_bath_str(l)) + " </div>\n  <div class=\"beds\"> " + l.BedsTotal + " bed - </div>\n  <div class=\"description\"> " + l.PublicRemarks + " </div>\n  <div class=\"on-market-date\">On Market Date: " + l.OnMarketDate + "</div>\n  <div>Listing courtesy " + l.ListOfficeName + "</div>\n  <script type=\"application/json\">" + (JSON.stringify(listing)) + "</script>\n</div>";
     });
   };
 
   render = function(listings, zip, max_price, page) {
     var html;
-    console.log(listings);
+    if (typeof console !== "undefined" && console !== null) console.log(listings);
     if (listings.length === 0) {
       html = "no more listings";
       $(".next").hide();
@@ -80,11 +82,10 @@
         zip || (zip = "85203");
         max_price || (max_price = "200000");
         page = _page || "1";
-        console.log(zip, max_price, page);
         max_price = max_price.replace(/[^\d]/g, "");
         scrollTo(0, 0);
         $(".listings").empty().html("<img src=\"loader.gif\" />");
-        return $.get("http://homeseekr.com:8502?zip=" + zip + "&max_price=" + max_price + "&page=" + page + "&_ts=" + ((new Date()).getTime()), function(listings) {
+        return $.getJSON("http://homeseekr.com:8502/js?zip=" + zip + "&max_price=" + max_price + "&page=" + page + "&callback=?", function(listings) {
           return render(listings, zip, max_price, page);
         });
       },

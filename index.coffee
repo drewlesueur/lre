@@ -10,7 +10,7 @@ get_bath_str = (l) ->
 get_photo_html = (photos) ->
   return """
     <img src="#{photos[0].Uri300}" />
-  """ if photos[0]
+  """ if photos?[0]
   return """
     <img src="http://placekitten.com/300/225" />
   """
@@ -44,7 +44,6 @@ listings_to_html = (listings, zip, max_price, page) ->
           </a>
         </div>
         <div class="price"> #{accounting.formatMoney(l.ListPrice, "$", 0)} </div>
-        <div class="cross-streets">#{l.CrossStreet}</div>
         <div class="photos">#{get_photo_html(l.photos)}</div>
         #{get_sq_ft(l)}
         <div class="baths"> #{get_bath_str(l)} </div>
@@ -52,11 +51,12 @@ listings_to_html = (listings, zip, max_price, page) ->
         <div class="description"> #{l.PublicRemarks} </div>
         <div class="on-market-date">On Market Date: #{l.OnMarketDate}</div>
         <div>Listing courtesy #{l.ListOfficeName}</div>
+        <script type="application/json">#{JSON.stringify listing}</script>
       </div>
     """
 
 render = (listings, zip, max_price, page) ->
-  console.log listings
+  console?.log listings
   if listings.length == 0
     html = "no more listings"
     $(".next").hide()
@@ -82,14 +82,16 @@ $ ->
       max_price ||=  "200000"
       page = _page ||  "1"
       
-      console.log zip, max_price, page
       max_price = max_price.replace /[^\d]/g, ""
       scrollTo 0,0
       $(".listings").empty().html """
         <img src="loader.gif" />
       """
-      $.get "http://homeseekr.com:8502?zip=#{zip}&max_price=#{max_price}&page=#{page}&_ts=#{(new Date()).getTime()}", (listings) ->
+      #$.get "http://homeseekr.com:8502?zip=#{zip}&max_price=#{max_price}&page=#{page}&_ts=#{(new Date()).getTime()}", (listings) ->
+      #  render listings, zip, max_price, page
+      $.getJSON "http://homeseekr.com:8502/js?zip=#{zip}&max_price=#{max_price}&page=#{page}&callback=?", (listings) ->
         render listings, zip, max_price, page
+          
 
     redirect: () ->
       router.navigate '85203/200000/1', trigger: true

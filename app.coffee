@@ -58,16 +58,51 @@ app.get "/image", (_req, res) ->
   zip = req.query.zip || "85207"
   page = req.query.page || 2
   max_price = req.query.max_price || 200000
+  save_screen_shot zip, max_price, page, (err, path) ->
+    res.sendfile path
+
+save_screen_shot = (zip, max_price, page, cb) ->
   url = "http://homeseekr.com/##{zip}/#{max_price}/#{page}"
   console.log url
   exec("ph screenshot.coffee #{url}") (err, ret) ->
-    res.sendfile './screenshot.jpg'
+    cb null, "./screenshots/#{zip}_#{max_price}_#{page}.jpg"
+
+fs = require "fs"
+app.get "/cached_image", (_req, res) ->
+  req = _req
+  zip = req.query.zip || "85207"
+  page = req.query.page || 2
+  max_price = req.query.max_price || 200000
+  path = "./screenshots/#{zip}_#{max_price}_#{page}.jpg"
+  fs.exists path, (exists) ->
+    if exists
+      res.sendfile path
+    else
+      console.log path
+      save_screen_shot zip, max_price, page, (err, path) ->
+        res.sendfile path
 
 app.get "/", (_req, res) ->
   req = _req
   zip = req.query.zip || "85207"
   page = req.query.page || 2
   max_price = req.query.max_price || 200000
+  get_listings zip, page, max_price, (err, listings) ->
+    res.send listings
+
+app.get "/js", (_req, res) ->
+  req = _req
+  zip = req.query.zip || "85207"
+  page = req.query.page || 2
+  max_price = req.query.max_price || 200000
+  jsonp = req.query.callback or req.query.jsonp or "alert"
+  get_listings zip, page, max_price, (err, listings) ->
+    res.set "Content-Type", "text/javascript"
+    res.send "#{jsonp}(#{JSON.stringify(listings)})"
+
+
+
+get_listings = (zip, page, max_price, cb) ->
   spark "/v1/listings", {
     _filter: "PostalCode Eq '#{zip}' And StandardStatus Eq 'Active' And ListPrice Le #{max_price}.0 And PropertyType Eq 'A'"
     _orderby:"-ListPrice"
@@ -77,21 +112,21 @@ app.get "/", (_req, res) ->
     listings = data.D.Results
 
     get_all_photos listings, ->
-      res.send _.map listings, (listing) ->
-        listing.StandardFields = _.pick listing.StandardFields,
-          'BathsFull', 'BathsHalf', 'BathsTotal'
-          'photos', 'BuildingAreaTotal'
-          'UnparsedAddress', 
-          'City', 'StateOrProvince', 'PostalCode'
-          'StreetNumber','StreetDirPrefix', 'StreetName'
-          'ListPrice', 'BedsTotal', 'PublicRemarks'
-          'OnMarketDate', 'ListOfficeName'
-          'CrossStreet'
-        listing
+      cb err, filter_listings listings
 
-    #res.send data.D.Results[0]
-
-
+filter_listings = (listings) ->
+  _.map listings, (listing) ->
+    listing.StandardFields = _.pick listing.StandardFields,
+      'BathsFull', 'BathsHalf', 'BathsTotal'
+      'photos', 'BuildingAreaTotal'
+      'UnparsedAddress', 
+      'City', 'StateOrProvince', 'PostalCode'
+      'StreetNumber','StreetDirPrefix', 'StreetName'
+      'ListPrice', 'BedsTotal', 'PublicRemarks'
+      'OnMarketDate', 'ListOfficeName'
+      'CrossStreet'
+    listing
+  
 
 
 # spark "/v1/listings/20121025052627434500000000/photos", {}, (e, c) ->

@@ -20,12 +20,18 @@ waitFor = (testFx, onReady, timeOutMillis=3000) ->
 page = require('webpage').create();
 system = require 'system'
 url = system.args[1]
+split_url = url.split("#")[1]
+console.log split_url
+split_url = split_url.split "/"
+zip = split_url[0]
+price = split_url[1]
+page_nu = split_url[2]
 console.log "phantom url is #{url}"
-page.viewportSize =  width: 1024, height: 1000
+page.viewportSize =  width: 960, height: 1000
 page.open url, (status) ->
   waitFor ->
     page.evaluate -> $('.listing').length
   , ->
-    page.render 'screenshot.jpg'
+    page.render "screenshots/#{zip}_#{price}_#{page_nu}.jpg"
     phantom.exit()
 
